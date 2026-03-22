@@ -1,0 +1,122 @@
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { motion } from 'framer-motion';
+import { UserPlus, Mail, Lock, User, AlertCircle, Loader2 } from 'lucide-react';
+
+const Register = () => {
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const { register } = useAuth();
+    const navigate = useNavigate();
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        setLoading(true);
+        try {
+            await register(name, email, password);
+            navigate('/dashboard');
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to register');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="min-h-screen pt-24 pb-12 flex items-center justify-center px-4">
+            <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="max-w-md w-full glass p-8 rounded-3xl"
+            >
+                <div className="text-center mb-8">
+                    <h2 className="text-3xl font-bold mb-2">Create Account</h2>
+                    <p className="text-slate-600 dark:text-slate-400">Join ResumeGenius today</p>
+                </div>
+
+                {error && (
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-4 rounded-xl mb-6 flex items-center space-x-2 border border-red-100 dark:border-red-800"
+                    >
+                        <AlertCircle size={20} />
+                        <span className="text-sm font-medium">{error}</span>
+                    </motion.div>
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-5">
+                    <div>
+                        <label className="block text-sm font-medium mb-2 pl-1">Full Name</label>
+                        <div className="relative">
+                            <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                            <input
+                                type="text"
+                                required
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:outline-none transition-all"
+                                placeholder="John Doe"
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium mb-2 pl-1">Email Address</label>
+                        <div className="relative">
+                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                            <input
+                                type="email"
+                                required
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:outline-none transition-all"
+                                placeholder="name@example.com"
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium mb-2 pl-1">Password</label>
+                        <div className="relative">
+                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                            <input
+                                type="password"
+                                required
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:outline-none transition-all"
+                                placeholder="Min 6 characters"
+                            />
+                        </div>
+                    </div>
+
+                    <button
+                        disabled={loading}
+                        className="w-full btn btn-primary py-4 rounded-xl font-bold flex items-center justify-center space-x-2 mt-4"
+                    >
+                        {loading ? <Loader2 className="animate-spin" size={20} /> : (
+                            <>
+                                <UserPlus size={20} />
+                                <span>Get Started</span>
+                            </>
+                        )}
+                    </button>
+                </form>
+
+                <p className="mt-8 text-center text-slate-600 dark:text-slate-400 text-sm">
+                    Already have an account? {' '}
+                    <Link to="/login" className="text-primary-600 font-bold hover:underline">Log In</Link>
+                </p>
+            </motion.div>
+        </div>
+    );
+};
+
+export default Register;
