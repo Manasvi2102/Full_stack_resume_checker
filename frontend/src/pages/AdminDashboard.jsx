@@ -15,8 +15,8 @@ const AdminDashboard = () => {
             try {
                 const config = { headers: { Authorization: `Bearer ${user.token}` } };
                 const [analyticsRes, usersRes] = await Promise.all([
-                    axios.get('http://localhost:5000/api/admin/analytics', config),
-                    axios.get('http://localhost:5000/api/admin/users', config)
+                    axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/admin/analytics`, config),
+                    axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/admin/users`, config)
                 ]);
                 setAnalytics(analyticsRes.data);
                 setUsers(usersRes.data);

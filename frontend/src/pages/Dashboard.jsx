@@ -51,12 +51,12 @@ const Dashboard = () => {
             };
 
             // 1. Upload Resume
-            const uploadRes = await axios.post('http://localhost:5000/api/resume/upload', formData, config);
+            const uploadRes = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/resume/upload`, formData, config);
             const resumeId = uploadRes.data._id;
 
             // 2. Start AI Analysis
             setStatus('analyzing');
-            const analysisRes = await axios.post(`http://localhost:5000/api/analysis/${resumeId}`, {
+            const analysisRes = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/analysis/${resumeId}`, {
                 jobDescription
             }, {
                 headers: { Authorization: `Bearer ${user.token}` }
